@@ -1,8 +1,9 @@
+import os
 from typing import Callable
 import pandas as pd
 import numpy as np
 
-df_soft = pd.read_csv("SoftCosts/2019-PassengerSoftCosts.csv")
+df_soft = pd.read_csv(os.path.join(os.path.dirname(__file__), "2019-PassengerSoftCosts.csv"))
 
 
 def get_interpolated_value(delay, costs, delays):

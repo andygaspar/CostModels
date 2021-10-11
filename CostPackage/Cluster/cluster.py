@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import numpy as np
 
@@ -11,7 +13,7 @@ class ClusterError(Exception):
         return "Aircraft " + self.flight + " not found"
 
 
-cluster = pd.read_csv("Cluster/aircraftClustering.csv")
+cluster = pd.read_csv(os.path.join(os.path.dirname(__file__), "aircraftClustering.csv"))
 cluster_dict = dict(zip(cluster.AircraftType, cluster.AssignedAircraftType))
 
 

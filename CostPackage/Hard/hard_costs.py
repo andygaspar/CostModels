@@ -1,15 +1,15 @@
 from typing import Callable
-
+import os
 import pandas as pd
 import numpy as np
 
-df_hard_base = pd.read_csv("Hard/2019-PassengerHardCostsBaseScenario.csv")
+df_hard_base = pd.read_csv(os.path.join(os.path.dirname(__file__), "2019-PassengerHardCostsBaseScenario.csv"))
 
 """
 to integrate with the new tables
 """
-df_hard_low = pd.read_csv("Hard/2019-PassengerHardCostsBaseScenario.csv")
-df_hard_high = pd.read_csv("Hard/2019-PassengerHardCostsBaseScenario.csv")
+# df_hard_low = pd.read_csv("Hard/2019-PassengerHardCostsBaseScenario.csv")
+# df_hard_high = pd.read_csv("Hard/2019-PassengerHardCostsBaseScenario.csv")
 
 wide_body_list = ['B763', 'B744', 'A332']
 

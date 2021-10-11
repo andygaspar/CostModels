@@ -1,9 +1,9 @@
 from typing import Callable
-from Hard.hard_costs import get_hard_costs
-from Cluster.cluster import get_aircraft_cluster, ClusterError
-from MaintenanceCrew.maintenance_crew_costs import get_maintenance_and_crew_costs
-from CostScenario.cost_scenario import get_cost_scenario
-from SoftCosts.soft_costs import get_soft_costs
+from CostPackage.Hard.hard_costs import get_hard_costs
+from CostPackage.Cluster.cluster import get_aircraft_cluster, ClusterError
+from CostPackage.MaintenanceCrew.maintenance_crew_costs import get_maintenance_and_crew_costs
+from CostPackage.CostScenario.cost_scenario import get_cost_scenario
+from CostPackage.SoftCosts.soft_costs import get_soft_costs
 
 
 def get_cost_model(aircraft_type: str, airline: str, n_passengers: int = None, destination: str = None,
@@ -24,5 +24,3 @@ def get_cost_model(aircraft_type: str, airline: str, n_passengers: int = None, d
         print(cl_error.message)
 
 
-pippo = get_cost_model("A1", "fhjd", 200, "fjfjfj")
-print(pippo(20))

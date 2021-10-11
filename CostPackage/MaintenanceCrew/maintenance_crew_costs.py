@@ -1,13 +1,9 @@
+import os
 from typing import Callable
 import pandas as pd
-import numpy as np
 
-from Cluster.cluster import get_aircraft_cluster
-from CostScenario.cost_scenario import get_cost_scenario
-
-
-df_crew = pd.read_csv("MaintenanceCrew/2019-TacticalCrewCosts.csv")
-df_maintenance = pd.read_csv("MaintenanceCrew/2019-TacticalMaintenanceCosts.csv")
+df_crew = pd.read_csv(os.path.join(os.path.dirname(__file__), "2019-TacticalCrewCosts.csv"))
+df_maintenance = pd.read_csv(os.path.join(os.path.dirname(__file__), "2019-TacticalMaintenanceCosts.csv"))
 
 
 def get_maintenance_and_crew_costs(aircraft_cluster: str, scenario: str) -> Callable:
