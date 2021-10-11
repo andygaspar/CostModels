@@ -20,7 +20,9 @@ setup(
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
     long_description=long_description,
+    url='git@github.com:andygaspar/CostModels.git',
     packages=find_packages(),
+    license='MIT',
     install_requires=['numpy', 'pandas'],
     keywords=['flights', 'costs', 'cost model', 'delay'],
     classifiers=[
