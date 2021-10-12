@@ -2,5 +2,5 @@ include CostPackage/Hard/*.csv
 include CostPackage/AircraftSeats/*.csv
 include CostPackage/Cluster/*.csv
 include CostPackage/MaintenanceCrew/*.csv
-include CostPackage/SoftCosts/*.csv
+include CostPackage/Soft/*.csv
 include CostPackage/CostScenario/*.csv
