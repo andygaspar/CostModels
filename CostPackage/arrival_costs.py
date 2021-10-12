@@ -4,13 +4,17 @@ from CostPackage.Cluster.cluster import get_aircraft_cluster, ClusterError
 from CostPackage.MaintenanceCrew.maintenance_crew_costs import get_maintenance_and_crew_costs
 from CostPackage.CostScenario.cost_scenario import get_cost_scenario
 from CostPackage.Soft.soft_costs import get_soft_costs
+from CostPackage.Passengers.passengers import get_passengers
 
 
-def get_cost_model(aircraft_type: str, airline: str, n_passengers: int = None, destination: str = None,
+def get_cost_model(aircraft_type: str, airline: str, destination: str, n_passengers: int = None,
                    length: float = None) -> Callable:
     try:
         aircraft_cluster = get_aircraft_cluster(aircraft_type=aircraft_type)
         cost_scenario = get_cost_scenario(airline=airline, destination=destination)
+
+        if n_passengers is None:
+            n_passengers = get_passengers(aircraft_cluster, cost_scenario)
 
         hard_costs = get_hard_costs(passengers=n_passengers, aircraft=aircraft_cluster, scenario=cost_scenario,
                                     length=length)
