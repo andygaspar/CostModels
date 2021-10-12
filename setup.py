@@ -23,7 +23,7 @@ setup(
     url='git@github.com:andygaspar/CostModels.git',
     packages=find_packages(),
     license='MIT',
-    install_requires=['numpy', 'pandas'],
+    install_requires=['pandas'],
     keywords=['flights', 'costs', 'cost model', 'delay'],
     classifiers=[
         "Development Status :: 1 - Planning",
