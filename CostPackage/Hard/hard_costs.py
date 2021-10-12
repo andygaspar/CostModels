@@ -8,8 +8,8 @@ df_hard_base = pd.read_csv(os.path.join(os.path.dirname(__file__), "2019-Passeng
 """
 to integrate with the new tables
 """
-df_hard_low = pd.read_csv(os.path.join(os.path.dirname(__file__), "Hard/2019-PassengerHardCostsBaseScenario.csv"))
-df_hard_high = pd.read_csv(os.path.join(os.path.dirname(__file__), "Hard/2019-PassengerHardCostsBaseScenario.csv"))
+df_hard_low = pd.read_csv(os.path.join(os.path.dirname(__file__), "2019-PassengerHardCostsBaseScenario.csv"))
+df_hard_high = pd.read_csv(os.path.join(os.path.dirname(__file__), "2019-PassengerHardCostsBaseScenario.csv"))
 
 wide_body_list = ['B763', 'B744', 'A332']
 
