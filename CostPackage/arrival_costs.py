@@ -1,3 +1,5 @@
+import pandas as pd
+import os
 from typing import Callable
 from CostPackage.Hard.hard_costs import get_hard_costs
 from CostPackage.Cluster.cluster import get_aircraft_cluster, ClusterError
@@ -26,3 +28,17 @@ def get_cost_model(aircraft_type: str, airline: str, destination: str, n_passeng
 
     except ClusterError as cl_error:
         print(cl_error.message)
+
+
+def get_data_dict():
+    data_dict = {
+        "aircraft": pd.read_csv(os.path.join(os.path.dirname(__file__), "Cluster/aircraftClustering.csv")),
+        "aircraft_seats": pd.read_csv(os.path.join(os.path.dirname(__file__), "Passengers/2019-AircraftSeats.csv")),
+        "airports": pd.read_csv(os.path.join(os.path.dirname(__file__), "CostScenario/airportMore25M.csv")),
+        "hard": pd.read_csv(os.path.join(os.path.dirname(__file__), "Hard/2019-PassengerHardCostsBaseScenario.csv")),
+        "crew": pd.read_csv(os.path.join(os.path.dirname(__file__), "MaintenanceCrew/2019-TacticalCrewCosts.csv")),
+        "maintenance": pd.read_csv(os.path.join(os.path.dirname(__file__),
+                                                "MaintenanceCrew/2019-TacticalMaintenanceCosts.csv")),
+        "soft": pd.read_csv(os.path.join(os.path.dirname(__file__), "Soft/2019-PassengerSoftCosts.csv"))
+    }
+    return data_dict

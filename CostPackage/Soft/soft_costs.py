@@ -16,7 +16,7 @@ def get_interpolated_value(delay, costs, delays):
 
 
 def get_soft_costs(passengers: int, scenario: str) -> Callable:
-    entry_scenario = 'LowScenario' if scenario== "low" else 'BaseScenario' if scenario == 'base' else 'HighScenario'
+    entry_scenario = 'LowScenario' if scenario == "low" else 'BaseScenario' if scenario == 'base' else 'HighScenario'
 
     costs = df_soft[entry_scenario].to_numpy()
     delays = df_soft.Delay.to_numpy()
