@@ -18,7 +18,7 @@ def get_interval(delay, costs, delays):
     if delay < delays[0]:
         return 0
     for i in range(delays.shape[0] - 1):
-        if delays[i] < delay < delays[i + 1]:
+        if delays[i] <= delay < delays[i + 1]:
             return costs[i]
     return costs[-1]
 
