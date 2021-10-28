@@ -16,7 +16,7 @@ setup(
     name="CostModels",
     version=VERSION,
     author="Andrea Gasparin, Fulvio Vascotto",
-    author_email="<andrea.gasparin.phd@units.it>",
+    author_email="<andrea.gasparin@phd.units.it>",
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
     long_description=long_description,

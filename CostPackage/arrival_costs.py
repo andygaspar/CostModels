@@ -1,3 +1,5 @@
+import copy
+
 import pandas as pd
 import os
 from typing import Callable, List, Tuple
@@ -30,14 +32,16 @@ def get_cost_model(aircraft_type: str, airline: str, destination: str, n_passeng
 
         if missed_connected is not None:
             hard_costs_mc = get_hard_costs(passengers=1, aircraft=aircraft_cluster, scenario=cost_scenario,
-                                        length=length)
+                                           length=length)
             soft_costs_mc = get_soft_costs(passengers=1, scenario=cost_scenario)
-            hc_mp = [lambda delay: hard_costs_mc(delay) if delay < passenger[0] else hard_costs_mc(passenger[1])
-                     for passenger in missed_connected]
-            sc_mp = [lambda delay: soft_costs_mc(delay) if delay < passenger[0] else soft_costs_mc(passenger[1])
-                     for passenger in missed_connected]
-            return lambda delay: hard_costs(delay) + soft_costs(delay) + maintenance_crew_costs(delay) \
-                                 + sum(hc(delay) for hc in hc_mp) +sum(sc(delay) for sc in sc_mp)
+            hc_mp = lambda delay, passenger: hard_costs_mc(delay) if delay < passenger[0] else hard_costs_mc(
+                passenger[1])
+
+            sc_mp = lambda delay, passenger: soft_costs_mc(delay) if delay < passenger[0] else soft_costs_mc(
+                passenger[1])
+            return lambda delay: hard_costs(delay) + soft_costs(delay) + maintenance_crew_costs(delay) + sum(
+                hc_mp(delay, passenger) for passenger in missed_connected) + sum(
+                sc_mp(delay, passenger) for passenger in missed_connected)
 
         return lambda delay: hard_costs(delay) + soft_costs(delay) + maintenance_crew_costs(delay)
 
