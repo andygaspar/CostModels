@@ -1,7 +1,6 @@
 from typing import Callable
 import os
 import pandas as pd
-import numpy as np
 
 df_hard_base = pd.read_csv(os.path.join(os.path.dirname(__file__), "2019-PassengerHardCostsBaseScenario.csv"))
 

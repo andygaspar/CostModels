@@ -1,8 +1,5 @@
 import os
-from typing import Callable
-
 import pandas as pd
-import numpy as np
 
 lcc_airlines = pd.read_csv(os.path.join(os.path.dirname(__file__), "2017-LCC.csv"))
 

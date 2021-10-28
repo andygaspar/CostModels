@@ -1,5 +1,3 @@
-import copy
-
 import pandas as pd
 import os
 from typing import Callable, List, Tuple

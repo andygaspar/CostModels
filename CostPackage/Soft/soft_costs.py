@@ -1,14 +1,13 @@
 import os
 from typing import Callable
 import pandas as pd
-import numpy as np
 
 df_soft = pd.read_csv(os.path.join(os.path.dirname(__file__), "2019-PassengerSoftCosts.csv"))
 
 
 def get_interpolated_value(delay, costs, delays):
     if delay < delays[0]:
-        return (delay) * (costs[0]) / (delays[0])
+        return delay * (costs[0]) / (delays[0])
     for i in range(delays.shape[0] - 1):
         if delays[i] <= delay < delays[i + 1]:
             return (delay - delays[i]) * (costs[i + 1] - costs[i]) / (delays[i + 1] - delays[i]) + costs[i]
