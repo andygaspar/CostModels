@@ -1,16 +1,18 @@
 import pandas as pd
 import os
-from typing import Callable, List, Tuple
+from typing import Callable, List, Tuple, Union
 from CostPackage.Hard.hard_costs import get_hard_costs
 from CostPackage.Cluster.cluster import get_aircraft_cluster, ClusterError
 from CostPackage.MaintenanceCrew.maintenance_crew_costs import get_maintenance_and_crew_costs
 from CostPackage.CostScenario.cost_scenario import get_cost_scenario
 from CostPackage.Soft.soft_costs import get_soft_costs
 from CostPackage.Passengers.passengers import get_passengers
+from CostPackage.Curfew.curfew import get_curfew_value
 
 
 def get_cost_model(aircraft_type: str, airline: str, destination: str, n_passengers: int = None,
-                   missed_connected: List[Tuple] = None, length: float = None) -> Callable:
+                   missed_connected: List[Tuple] = None, length: float = None,
+                   curfew: Union[float, tuple[float, int]] = None) -> Callable:
     try:
         aircraft_cluster = get_aircraft_cluster(aircraft_type=aircraft_type)
         cost_scenario = get_cost_scenario(airline=airline, destination=destination)
@@ -37,11 +39,21 @@ def get_cost_model(aircraft_type: str, airline: str, destination: str, n_passeng
 
             sc_mp = lambda delay, passenger: soft_costs_mc(delay) if delay < passenger[0] else soft_costs_mc(
                 passenger[1])
-            return lambda delay: hard_costs(delay) + soft_costs(delay) + maintenance_crew_costs(delay) + sum(
+            cost_fun = lambda delay: hard_costs(delay) + soft_costs(delay) + maintenance_crew_costs(delay) + sum(
                 hc_mp(delay, passenger) for passenger in missed_connected) + sum(
                 sc_mp(delay, passenger) for passenger in missed_connected)
 
-        return lambda delay: hard_costs(delay) + soft_costs(delay) + maintenance_crew_costs(delay)
+        else:
+            cost_fun = lambda delay: hard_costs(delay) + soft_costs(delay) + maintenance_crew_costs(delay)
+
+        if curfew is None:
+            return cost_fun
+
+        else:
+            curfew_threshold = curfew if type(curfew) != tuple else curfew[0]
+            n_pax_last_rotation = None if type(curfew) != tuple else curfew[1]
+            return lambda delay: cost_fun(delay) if delay < curfew_threshold \
+                else get_curfew_value(aircraft_cluster, n_pax_last_rotation)
 
     except ClusterError as cl_error:
         print(cl_error.message)
