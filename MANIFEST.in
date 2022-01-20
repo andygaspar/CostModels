@@ -4,3 +4,4 @@ include CostPackage/Cluster/*.csv
 include CostPackage/MaintenanceCrew/*.csv
 include CostPackage/Soft/*.csv
 include CostPackage/CostScenario/*.csv
+include CostPackage/Curfew/*.csv
