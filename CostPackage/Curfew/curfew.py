@@ -4,15 +4,13 @@ import pandas as pd
 
 df_curfew = pd.read_csv(os.path.join(os.path.dirname(__file__), "curfew.csv"))
 
+wide_body_list = ['B763', 'B744', 'A332']
 
-def get_curfew_value(air_cluster: str, n_pax_last_aircraft_rotation: int = None) -> float:
 
-    if n_pax_last_aircraft_rotation is None:
-        fixed_costs = df_curfew[df_curfew.AirCluster == air_cluster].Fixed.iloc[0]
-        return fixed_costs
-
+def get_curfew_value(air_cluster: str, cost_scenario: str, curfew_passengers: int) -> float:
+    if air_cluster in wide_body_list:
+        return curfew_passengers * 254 + 19230
+    elif cost_scenario == "low":
+        return curfew_passengers * 102.75
     else:
-        compensation = 300
-        fixed_costs = df_curfew[df_curfew.AirCluster == air_cluster].Cost.iloc[0]
-        return fixed_costs + n_pax_last_aircraft_rotation * compensation
-
+        return curfew_passengers * 136.59

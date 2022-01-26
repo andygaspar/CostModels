@@ -9,7 +9,7 @@ cost_fun = get_cost_model(aircraft_type="A320", airline="fhjd", destination="fjf
 cost_fun_mc = get_cost_model(aircraft_type="A320", airline="fhjd", destination="fjfjfj", n_passengers=170,
                              missed_connected=[(20, 300), (40, 200), (25, 185)])
 cost_fun_mc_1 = get_cost_model(aircraft_type="A320", airline="fhjd", destination="fjfjfj", n_passengers=170,
-                               missed_connected=[(20, 300) for _ in range(20)], curfew=(30,100))
+                               missed_connected=[(20, 300) for _ in range(20)], self_curfew=30)
 
 # print(pippo(20))
 # data = get_data_dict()

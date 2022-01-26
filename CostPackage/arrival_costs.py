@@ -11,8 +11,8 @@ from CostPackage.Curfew.curfew import get_curfew_value
 
 
 def get_cost_model(aircraft_type: str, airline: str, destination: str, n_passengers: int = None,
-                   missed_connected: List[Tuple] = None, length: float = None,
-                   curfew: Union[float, tuple[float, int]] = None) -> Callable:
+                   missed_connected: List[Tuple] = None, length: float = None, self_curfew: float = None,
+                   react_curfew: Union[tuple[float, str], tuple[float, int]] = None) -> Callable:
     try:
         aircraft_cluster = get_aircraft_cluster(aircraft_type=aircraft_type)
         cost_scenario = get_cost_scenario(airline=airline, destination=destination)
@@ -46,14 +46,20 @@ def get_cost_model(aircraft_type: str, airline: str, destination: str, n_passeng
         else:
             cost_fun = lambda delay: hard_costs(delay) + soft_costs(delay) + maintenance_crew_costs(delay)
 
-        if curfew is None:
+        if self_curfew is None and react_curfew is None:
             return cost_fun
 
         else:
-            curfew_threshold = curfew if type(curfew) != tuple else curfew[0]
-            n_pax_last_rotation = None if type(curfew) != tuple else curfew[1]
+            if self_curfew is not None:
+                curfew_threshold = self_curfew
+                curfew_passengers = n_passengers if missed_connected is None else n_passengers + len(missed_connected)
+            else:
+                curfew_threshold = react_curfew[0]
+                curfew_passengers = get_passengers(aircraft_cluster, get_cost_scenario(airline, react_curfew[1])) \
+                    if type(react_curfew[1]) == str else react_curfew[1]
+
             return lambda delay: cost_fun(delay) if delay < curfew_threshold \
-                else get_curfew_value(aircraft_cluster, n_pax_last_rotation)
+                else get_curfew_value(aircraft_cluster, cost_scenario, curfew_passengers)
 
     except ClusterError as cl_error:
         print(cl_error.message)
