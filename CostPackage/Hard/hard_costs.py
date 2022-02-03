@@ -1,16 +1,34 @@
 from typing import Callable
 import os
+
+import numpy as np
 import pandas as pd
 
-df_hard_base = pd.read_csv(os.path.join(os.path.dirname(__file__), "2019-PassengerHardCostsBaseScenario.csv"))
+# dataframe from deliverable D3.2 Industry  briefing  on updates  to  the  European cost of delay, Beacon Project, 2019
+df_hard_reimbursement_rate = pd.read_csv(os.path.join(os.path.dirname(__file__), "reimbursementPaxRate.csv"))
+df_hard_waiting_rate = pd.read_csv(os.path.join(os.path.dirname(__file__), "waitingPaxRate.csv"))
+df_hard = pd.read_csv(os.path.join(os.path.dirname(__file__), "passengersHardCosts.csv"))
 
-"""
-to integrate with the new tables
-"""
-df_hard_low = pd.read_csv(os.path.join(os.path.dirname(__file__), "2019-PassengerHardCostsBaseScenario.csv"))
-df_hard_high = pd.read_csv(os.path.join(os.path.dirname(__file__), "2019-PassengerHardCostsBaseScenario.csv"))
+# from The cost of passenger delay to airlines in Europe, consultation document, UOW 2015
+# confirmed in deliverable D3.2 Industry  briefing  on updates  to  the  European cost of delay, Beacon Project, 2019
+WAITING_RATE = .8
+REIMBURSEMENT_RATE = 0.2
 
-wide_body_list = ['B763', 'B744', 'A332']
+# from The cost of passenger delay to airlines in Europe, consultation document, UOW 2015
+WAITING_RATE_LOW_COST = .9
+REIMBURSEMENT_RATE_LOW_COST = 0.1
+
+
+def get_cost(cost_type: str, haul: str):
+    return df_hard[df_hard.CostType == cost_type][haul]
+
+
+def get_waiting_rate(cost_type: str, haul: str):
+    return df_hard_waiting_rate[df_hard_waiting_rate.CostType == cost_type][haul]
+
+
+def get_reimbursement_rate(cost_type: str, haul: str):
+    return df_hard_reimbursement_rate[df_hard_reimbursement_rate.CostType == cost_type][haul]
 
 
 def get_interval(delay, costs, delays):
@@ -22,32 +40,28 @@ def get_interval(delay, costs, delays):
     return costs[-1]
 
 
-def get_hard_costs(passengers: int, aircraft: str, scenario: str, length: float) -> Callable:
-    if scenario == "high":
-        df_hard = df_hard_high
-    elif scenario == "base":
-        df_hard = df_hard_base
-    else:
-        df_hard = df_hard_low
+def get_hard_costs(passengers: int, scenario: str, haul: str) -> Callable:
+    waiting_pax = int(passengers * (WAITING_RATE_LOW_COST if scenario == "low" else WAITING_RATE))
+    reimbursement_pax = int(passengers * (REIMBURSEMENT_RATE_LOW_COST if scenario == "low" else REIMBURSEMENT_RATE))
 
-    if length is None:
-        delays = df_hard.Delay.to_numpy()
-        if aircraft in wide_body_list:
-            costs = df_hard.LongHaul.to_numpy()
-            return lambda d: get_interval(d, costs, delays) * passengers
+    costs_waiting = ((get_cost("care", haul) * get_waiting_rate("care", haul)).to_numpy() +
+                     (get_cost("reimbursement_rebooking", haul) * get_waiting_rate("reimbursement_rebooking",
+                                                                                   haul)).to_numpy() +
+                     (get_cost("compensation", haul) * get_waiting_rate("compensation", haul)).to_numpy() +
+                     (get_cost("accommodation", haul) * get_waiting_rate("accommodation",
+                                                                         haul)).to_numpy()
+                     ) * waiting_pax
 
-        else:
-            costs = df_hard.MediumHaul.to_numpy()
-            return lambda d: get_interval(d, costs, delays) * passengers
+    costs_reimbursement = ((get_cost("care", haul) * get_reimbursement_rate("care", haul)).to_numpy() +
+                           (get_cost("reimbursement_rebooking", haul) *
+                            get_reimbursement_rate("reimbursement_rebooking", haul)).to_numpy() +
+                           (get_cost("compensation", haul) *
+                            get_reimbursement_rate("compensation", haul)).to_numpy() +
+                           (get_cost("accommodation", haul) *
+                            get_reimbursement_rate("accommodation", haul)).to_numpy()
+                           ) * reimbursement_pax
 
-    else:
-        delays = df_hard.Delay.to_numpy()
-        if length <= 1500:
-            costs = df_hard.ShortHaul.to_numpy()
-            return lambda d: get_interval(d, costs, delays) * passengers
-        if length <= 3500:
-            costs = df_hard.MediumHaul.to_numpy()
-            return lambda d: get_interval(d, costs, delays) * passengers
+    delays = np.array([120, 180, 240, 300, 600])
+    costs = costs_waiting + costs_reimbursement
 
-        costs = df_hard.LongHaul.to_numpy()
-        return lambda d: get_interval(d, costs, delays) * passengers
+    return lambda d: get_interval(d, costs, delays)
