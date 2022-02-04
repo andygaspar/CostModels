@@ -13,8 +13,6 @@ from CostPackage.Soft.soft_costs import get_soft_costs
 from CostPackage.Passengers.passengers import get_passengers
 from CostPackage.Curfew.curfew import get_curfew_value
 
-delays_ = range(60 * 4 + 1)
-
 
 def get_cost_model(aircraft_type: str, airline: str, destination: str, length: float, n_passengers: int,
                    missed_connected: List[Tuple] = None,
@@ -56,19 +54,10 @@ def get_cost_model(aircraft_type: str, airline: str, destination: str, length: f
 
         hard_costs = get_hard_costs(passengers=n_passengers, scenario=cost_scenario, haul=haul)
 
-        plt.plot(delays_, [hard_costs(t) for t in delays_])
-        plt.show()
-
         soft_costs = get_soft_costs(passengers=n_passengers, scenario=cost_scenario)
-
-        plt.plot(delays_, [hard_costs(t) + soft_costs(t) for t in delays_])
-        plt.show()
 
         maintenance_crew_costs = get_maintenance_and_crew_costs(aircraft_cluster=aircraft_cluster,
                                                                 scenario=cost_scenario)
-
-        plt.plot(delays_, [hard_costs(t) + soft_costs(t) + maintenance_crew_costs(t) for t in delays_])
-        plt.show()
 
         if n_missed_connected > 0:
             hard_costs_mc = get_hard_costs(passengers=1, scenario=cost_scenario, haul=haul)
@@ -81,9 +70,6 @@ def get_cost_model(aircraft_type: str, airline: str, destination: str, length: f
             cost_fun = lambda delay: hard_costs(delay) + soft_costs(delay) + maintenance_crew_costs(delay) + sum(
                 hc_mp(delay, passenger) for passenger in missed_connected) + sum(
                 sc_mp(delay, passenger) for passenger in missed_connected)
-
-            plt.plot(delays_, [cost_fun(t) for t in delays_])
-            plt.show()
 
         else:
             cost_fun = lambda delay: hard_costs(delay) + soft_costs(delay) + maintenance_crew_costs(delay)
@@ -115,13 +101,6 @@ def get_data_dict():
     }
     return data_dict
 
-
-c_fun = get_cost_model("A320", "BAW", "EGLL", 840, 120,
-                       [(80, 400) for _ in range(16)] + [(140, 500) for _ in range(12)],
-                       (210, 170))
-
-plt.plot(delays_, [c_fun(t) for t in delays_])
-plt.show()
 
 def get_pax_number(airline: str, destination: str, aircraft_type: str):
     aircraft_cluster = get_aircraft_cluster(aircraft_type=aircraft_type)
