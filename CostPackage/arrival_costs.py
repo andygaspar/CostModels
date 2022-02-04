@@ -76,7 +76,7 @@ def get_cost_model(aircraft_type: str, airline: str, destination: str, length: f
             curfew_passengers = curfew[1] if type(curfew) == tuple else n_passengers + n_missed_connected
 
         return lambda delay: cost_fun(delay) if delay < curfew_threshold \
-            else get_curfew_value(aircraft_cluster, cost_scenario, curfew_passengers)
+            else cost_fun(delay) + get_curfew_value(aircraft_cluster, cost_scenario, curfew_passengers)
 
     except ClusterError as cl_error:
         print(cl_error.message)
