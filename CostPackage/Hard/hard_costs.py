@@ -41,8 +41,8 @@ def get_interval(delay, costs, delays):
 
 
 def get_hard_costs(passengers: int, scenario: str, haul: str) -> Callable:
-    waiting_pax = int(passengers * (WAITING_RATE_LOW_COST if scenario == "low" else WAITING_RATE))
-    reimbursement_pax = int(passengers * (REIMBURSEMENT_RATE_LOW_COST if scenario == "low" else REIMBURSEMENT_RATE))
+    waiting_pax = passengers * (WAITING_RATE_LOW_COST if scenario == "low" else WAITING_RATE)
+    reimbursement_pax = passengers * (REIMBURSEMENT_RATE_LOW_COST if scenario == "low" else REIMBURSEMENT_RATE)
 
     costs_waiting = ((get_cost("care", haul) * get_waiting_rate("care", haul)).to_numpy() +
                      (get_cost("reimbursement_rebooking", haul) * get_waiting_rate("reimbursement_rebooking",
