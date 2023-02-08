@@ -62,9 +62,10 @@ def get_cost_model(aircraft_type: str, airline: str, destination: str, length: f
         if n_missed_connected > 0:
             hard_costs_mc = get_hard_costs(passengers=1, scenario=cost_scenario, haul=haul)
             soft_costs_mc = get_soft_costs(passengers=1, scenario=cost_scenario)
+            #  set only care if delay < pax_connection_th
             hc_mp = lambda delay, passenger: hard_costs_mc(delay) if delay < passenger[0] else hard_costs_mc(
                 passenger[1])
-
+            #  set 0 if delay < pax_connection_th
             sc_mp = lambda delay, passenger: soft_costs_mc(delay) if delay < passenger[0] else soft_costs_mc(
                 passenger[1])
             cost_fun = lambda delay: hard_costs(delay) + soft_costs(delay) + maintenance_crew_costs(delay) + sum(

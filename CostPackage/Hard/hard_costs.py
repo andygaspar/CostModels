@@ -65,3 +65,5 @@ def get_hard_costs(passengers: int, scenario: str, haul: str) -> Callable:
     costs = costs_waiting + costs_reimbursement
 
     return lambda d: get_interval(d, costs, delays)
+
+
