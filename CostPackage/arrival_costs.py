@@ -2,8 +2,6 @@ import pandas as pd
 import os
 from typing import Callable, List, Tuple, Union
 
-from matplotlib import pyplot as plt
-
 from CostPackage.Hard.hard_costs import get_hard_costs
 from CostPackage.Cluster.cluster import get_aircraft_cluster, ClusterError
 from CostPackage.Haul.haul import get_haul
@@ -14,7 +12,7 @@ from CostPackage.Passengers.passengers import get_passengers
 from CostPackage.Curfew.curfew import get_curfew_value
 
 
-def get_cost_model(aircraft_type: str, airline: str, destination: str, length: float, n_passengers: int,
+def get_cost_model(aircraft_type: str, is_low_cost: bool, destination: str, length: float, n_passengers: int,
                    missed_connected: List[Tuple] = None,
                    curfew: Union[tuple[float, int], float] = None) -> Callable:
     """Generate cost function of a given flight according to the specifics
@@ -47,7 +45,7 @@ def get_cost_model(aircraft_type: str, airline: str, destination: str, length: f
 
     try:
         aircraft_cluster = get_aircraft_cluster(aircraft_type=aircraft_type)
-        cost_scenario = get_cost_scenario(airline=airline, destination=destination)
+        cost_scenario = get_cost_scenario(is_low_cost=is_low_cost, destination=destination)
 
         n_missed_connected = 0 if missed_connected is None else len(missed_connected)
         n_passengers -= n_missed_connected
@@ -103,9 +101,9 @@ def get_data_dict():
     return data_dict
 
 
-def get_pax_number(airline: str, destination: str, aircraft_type: str):
+def get_pax_number(is_low_cost: bool, destination: str, aircraft_type: str):
     aircraft_cluster = get_aircraft_cluster(aircraft_type=aircraft_type)
-    cost_scenario = get_cost_scenario(airline=airline, destination=destination)
+    cost_scenario = get_cost_scenario(is_low_cost=is_low_cost, destination=destination)
     return get_passengers(aircraft_cluster, cost_scenario)
 
 
